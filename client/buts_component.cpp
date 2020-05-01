@@ -4,8 +4,8 @@ start_component::start_component(QString name, QWidget *parent)
     : BaseComponent(parent)
 {
     QPushButton* but = new QPushButton(name, this);
-    but->setFixedSize(15*7, 30);
-    this->setFixedSize(15*7, 30);
+    but->setFixedSize(128, 30);
+    this->setFixedSize(128, 30);
     connect(but, &QPushButton::clicked, this, &start_component::ping);
 }
 
@@ -19,8 +19,8 @@ restart_component::restart_component(QString name, QWidget *parent)
     : BaseComponent(parent)
 {
     QPushButton* but = new QPushButton(name, this);
-    but->setFixedSize(15*7, 30);
-    this->setFixedSize(15*7, 30);
+    but->setFixedSize(128, 30);
+    this->setFixedSize(128, 30);
     connect(but, &QPushButton::clicked, this, &restart_component::ping);
 }
 

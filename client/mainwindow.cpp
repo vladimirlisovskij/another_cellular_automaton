@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent)
     QGridLayout* buts_lay = new QGridLayout;
     main_lay->addWidget(screen_);
 
+    editor_lay->addLayout(buts_lay);
     editor_lay->addWidget(panel1_);
     editor_lay->addWidget(panel2_);
     editor_lay->setContentsMargins(0,0,0,0);
@@ -64,13 +65,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     main_lay->addLayout(panel_lay);
     main_lay->addLayout(editor_lay);
-    main_lay->addLayout(buts_lay);
     main->setLayout(main_lay);
     main_lay->setContentsMargins(0,0,0,0);
     main_lay->setSpacing(0);
 
     this->setCentralWidget(main);
-    this->setFixedWidth(1365);
+    this->setFixedWidth(1161);
     this->setFixedHeight(15*30);
 }
 

@@ -8,11 +8,11 @@ client_component::client_component(QHostAddress ip, qint32 port, QWidget *parent
     , _ip(ip)
     , _port(port)
 {
-    this->setFixedSize(15*14, 25);
+    this->setFixedSize(256, 25);
     this->setStyleSheet("background-color: red;");
     QHBoxLayout* lay = new QHBoxLayout;
-    _lab->setFixedSize(15*7,25);
-    _but->setFixedSize(15*7,25);
+    _lab->setFixedSize(128,25);
+    _but->setFixedSize(128,25);
     lay->addWidget(_lab);
     lay->addWidget(_but);
     lay->setContentsMargins(0,0,0,0);
@@ -44,7 +44,7 @@ void client_component::start()
 
 void client_component::connected()
 {
-    _lab->setFixedSize(15*14,25);
+    _lab->setFixedSize(256,25);
     _but->hide();
     _lab->setText("Connected");
     this->setStyleSheet("background-color: green;");
@@ -55,7 +55,7 @@ void client_component::disconnected()
     _soc->close();
     _but->show();
     _lab->setText("Disconnected");
-    _lab->setFixedSize(15*7,25);
+    _lab->setFixedSize(256,25);
     this->setStyleSheet("background-color: red;");
 }
 
