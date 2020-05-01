@@ -1,6 +1,6 @@
 # another_cellular_automaton
 
-![](prev_pic.jpg)  
+![](prev_pic.png)  
 
 # Правила симуляции
 
