@@ -1,8 +1,9 @@
-#include "playground.h"
+#include "screen_component.h"
 
-playground::playground(qint32 width, qint32 height, QWidget *parent)
-    : QWidget (parent)
-    , width(width), height(height)
+screen_component::screen_component(qint32 width, qint32 height, QWidget *parent)
+    : BaseComponent (parent)
+    , width (width)
+    , height (height)
     , first_buf (new QTableWidget(height, width, this)), second_buf (new QTableWidget(height, width, this))
 {
     first_buf->verticalHeader()->setMinimumSectionSize(15); second_buf->verticalHeader()->setMinimumSectionSize(15);   /* задаем длину и ширину ячеек */
@@ -31,7 +32,7 @@ playground::playground(qint32 width, qint32 height, QWidget *parent)
     this->setFixedSize(15*width, 15*height);
 }
 
-void playground::set_data(QHash<QPair<qint32,qint32>,QPair<QColor,QString>> data)
+void screen_component::set_data(QHash<QPair<qint32,qint32>,QPair<QColor,QString>> data)
 {
     for (qint32 x = 0; x < height; x++)
     {

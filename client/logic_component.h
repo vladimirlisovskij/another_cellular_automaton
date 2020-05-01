@@ -1,17 +1,15 @@
-// *********************
-// Содержит логику игры
-// *********************
+#ifndef LOGIC_COMPONENT_H
+#define LOGIC_COMPONENT_H
 
-#ifndef ECOSYSTEM_H
-#define ECOSYSTEM_H
+#include "base_component.h"
 
-#include <QVector>
+#include <QWidget>
 #include <QSet>
 #include <QDateTime>
 #include <QtMath>
 #include <QWidget>
 
-class Ecosystem : public QObject
+class logic_component : public BaseLogicComponent
 {
     Q_OBJECT
 public:
@@ -22,7 +20,7 @@ public:
         qint32 vitality;
         qint32 max_vitality;
     };
-    Ecosystem (qint32 width, qint32 height, QWidget *parent = nullptr);
+    logic_component(qint32 width, qint32 height, QWidget* parent = nullptr);
 
 public slots:
     void add_animal (Animal, qint32, qint32);
@@ -31,12 +29,8 @@ public slots:
     void clear ();
     void tik ();
 
-signals:
-    void new_data (QVector<QHash<QPair<qint32,qint32>,qint32>>);
-    void new_param (QVector<QVector<qint32>>);
-    void erase (qint32);
-
 private:
+    void update ();
     const qint32 width, height, square;
     enum Grass_size {LITTLE, MEDIUM, BIG};
     qint32 animals_num = 0;
@@ -47,7 +41,7 @@ private:
     QPair<qint32,qint32> get_free_pos ();
     Animal new_animal (Animal f, Animal m);
     qint32 new_stat (qint32 f, qint32 m);
-    QVector<QHash<QPair<qint32,qint32>,qint32>> get_data ();
+    QVector<QHash<QPair<qint32,qint32>,qint32>> make_data ();
     QVector<QVector<qint32>> get_stat ();
     void move ();
     void eat ();
@@ -55,5 +49,4 @@ private:
     void animal_move (QHash<QPair<qint32,qint32>,QVector<Animal>>&);
 };
 
-
-#endif // ECOSYSTEM_H
+#endif // LOGIC_COMPONENT_H

@@ -1,20 +1,21 @@
-#include "Ecosystem.h"
-#include <iostream>
+#include "logic_component.h"
 
-Ecosystem::Ecosystem(qint32 width, qint32 height, QWidget *parent)
-    : QObject (parent)
+logic_component::logic_component(qint32 width, qint32 height, QObject *parent)
+    : QObject(parent)
     , width(width)
     , height(height)
     , square(height*width)
+    , _max_specs(4)
 {
     qsrand(QDateTime::currentDateTime().toTime_t());
     clear();
 }
 
-void Ecosystem::add_animal(Ecosystem::Animal animal, qint32 num, qint32 level)
+void logic_component::add_animal(const logic_component::Animal& animal, qint32 num, qint32 level)
 {
-    if (all_free_space.size() >= num)
+    if (all_free_space.size() >= num && !_free_colors.empty())
     {
+        _colors.push_back(_free_colors.takeLast());
         QHash<QPair<qint32,qint32>,QVector<Animal>> temp;
         for (qint32 i = 0; i < num; ++i)
         {
@@ -23,35 +24,58 @@ void Ecosystem::add_animal(Ecosystem::Animal animal, qint32 num, qint32 level)
         all_animals.push_back(temp);
         all_animals_levels.push_back(level);
     }
-    emit new_data(get_data());
-    emit new_param(get_stat());
+    update();
 }
 
-void Ecosystem::add_grass(qint32 num)
+void logic_component::add_grass(qint32 num)
 {
-    if (all_free_space.size() >= num) for (qint32 i = 0; i < num; ++i) all_grass[get_free_pos()] = LITTLE;
-    emit new_data(get_data());
+    if (all_free_space.size() >= num)
+    {
+        for (qint32 i = 0; i < num; ++i) all_grass[get_free_pos()] = LITTLE;
+    }
+    update();
 }
 
-
-QVector<QHash<QPair<qint32,qint32>,qint32>> Ecosystem::get_data()
+QJsonObject logic_component::make_data()
 {
-    QVector<QHash<QPair<qint32,qint32>,qint32>> res;
-    QHash<QPair<qint32,qint32>,qint32> temp;
-    for (auto cell = all_grass.begin(); cell != all_grass.end(); ++ cell) temp[cell.key()] = cell.value();
-    res.push_back(temp);
+    QJsonObject res;
+
+    QJsonArray grass;
+    for (auto cell = all_grass.begin(); cell != all_grass.end(); ++ cell)
+    {
+        QJsonObject grass_cell;
+        QJsonObject pos;
+        pos["x"] = cell.key().first;
+        pos["y"] = cell.key().second;
+        grass_cell["key"] = pos;
+        grass_cell["value"] = cell.value();
+        grass.push_back(grass_cell);
+    }
+    res["grass"] = grass;
+
+    QJsonArray animals;
     for (auto spec: all_animals)
     {
-        temp.clear();
-        for (auto cell = spec.begin(); cell != spec.end(); ++cell) temp[cell.key()] = cell.value().size();
-        res.push_back(temp);
+        QJsonArray spec_res;
+        for (auto cell = spec.begin(); cell != spec.end(); ++cell)
+        {
+            QJsonObject spec_cell;
+            QJsonObject pos;
+            pos["x"] = cell.key().first;
+            pos["y"] = cell.key().second;
+            spec_cell["key"] = pos;
+            spec_cell["value"] = cell.value().size();
+            spec_res.push_back(spec_cell);
+        }
+        animals.push_back(spec_res);
     }
+    res["animals"] = animals;
     return res;
 }
 
-QVector<QVector<qint32>> Ecosystem::get_stat()
+QJsonArray logic_component::get_stat()
 {
-    QVector<QVector<qint32>> res;
+    QJsonArray res;
     for (qint32 i = 0; i < all_animals_levels.size(); ++i)
     {
         qint32 num = 0;
@@ -71,23 +95,26 @@ QVector<QVector<qint32>> Ecosystem::get_stat()
                 max_vitality += i.max_vitality;
             }
         }
-        if (num) res.push_back(QVector<qint32>{lvl, num, speed/num, endurance/num, vitality/num, max_vitality/num});
-        else  res.push_back(QVector<qint32>{lvl, 0, 0, 0, 0, 0});
+        if (num) res.push_back(QJsonArray{lvl, num, speed/num, endurance/num, vitality/num, max_vitality/num});
+        else  res.push_back(QJsonArray{lvl, 0, 0, 0, 0, 0});
     }
     return res;
 }
 
-void Ecosystem::remove_animal(qint32 pos)
+void logic_component::remove_animal(qint32 pos)
 {
     for (auto cell = all_animals[pos].begin(); cell != all_animals[pos].end(); ++cell) all_free_space.insert(cell.key());
     all_animals.remove(pos);
     all_animals_levels.remove(pos);
-    emit new_data(get_data());
-    emit new_param(get_stat());
+    _free_colors.push_back(_colors.takeAt(pos));
+    update();
 }
 
-void Ecosystem::clear()
+void logic_component::clear()
 {
+    _colors.clear();
+    _free_colors.clear();
+    for (qint32 i = 0; i < _max_specs; ++i) _free_colors.push(i);
     all_animals_levels.clear();
     all_animals.clear();
     all_grass.clear();
@@ -99,19 +126,29 @@ void Ecosystem::clear()
             all_free_space.insert(QPair<qint32,qint32> {x,y});
         }
     }
-    emit new_data(get_data());
+    update();
 }
 
-void Ecosystem::tik()
+void logic_component::tik()
 {
     move();
     eat();
     reproduction();
-    emit new_data(get_data());
-    emit new_param(get_stat());
+    update();
 }
 
-QPair<qint32, qint32> Ecosystem::get_free_pos()
+void logic_component::update()
+{
+    QJsonObject res;
+    res["koord"] = make_data();
+    res["stats"] = get_stat();
+    QJsonArray colors;
+    for (auto i : _colors) colors.push_back(i);
+    res["colors"] = colors;
+    emit notify(res);
+}
+
+QPair<qint32, qint32> logic_component::get_free_pos()
 {
     qint32 new_num = qrand() % all_free_space.size();
     QPair<qint32,qint32> pos = all_free_space.values()[new_num];
@@ -119,7 +156,7 @@ QPair<qint32, qint32> Ecosystem::get_free_pos()
     return pos;
 }
 
-Ecosystem::Animal Ecosystem::new_animal(Ecosystem::Animal f, Ecosystem::Animal m)
+logic_component::Animal logic_component::new_animal(logic_component::Animal f, logic_component::Animal m)
 {
     Animal res
     {
@@ -131,7 +168,7 @@ Ecosystem::Animal Ecosystem::new_animal(Ecosystem::Animal f, Ecosystem::Animal m
     return res;
 }
 
-qint32 Ecosystem::new_stat(qint32 f, qint32 m)
+qint32 logic_component::new_stat(qint32 f, qint32 m)
 {
     /* кроссовер */
     qint32 max_binary_len = qMax(qLn(f)/qLn(2), qLn(m)/qLn(2));
@@ -147,12 +184,12 @@ qint32 Ecosystem::new_stat(qint32 f, qint32 m)
     return qMax(1, result);
 }
 
-void Ecosystem::move()
+void logic_component::move()
 {
     for (auto &animal: all_animals) animal_move(animal);
 }
 
-void Ecosystem::eat()
+void logic_component::eat()
 {
     for (qint32 x = 0; x < height; ++x)
     {
@@ -200,7 +237,7 @@ void Ecosystem::eat()
     }
 }
 
-void Ecosystem::reproduction()
+void logic_component::reproduction()
 {
     QVector<QPair<qint32,qint32>> temp;
     for (auto iter = all_grass.begin(); iter != all_grass.end(); ++iter)
@@ -246,7 +283,7 @@ void Ecosystem::reproduction()
     }
 }
 
-void Ecosystem::animal_move(QHash<QPair<qint32,qint32>,QVector<Animal>>& animal)
+void logic_component::animal_move(QHash<QPair<qint32,qint32>,QVector<Animal>>& animal)
 {
     QHash<QPair<qint32,qint32>,QVector<Animal>> temp;   /* данные для следущего шага */
     for (auto iter = animal.begin(); iter != animal.end(); ++iter)   /* итерируемся по словарю животных */
@@ -277,4 +314,3 @@ void Ecosystem::animal_move(QHash<QPair<qint32,qint32>,QVector<Animal>>& animal)
     }
     animal = temp;
 }
-

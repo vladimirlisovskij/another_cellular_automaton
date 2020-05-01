@@ -1,8 +1,9 @@
-QT       += core gui charts
+QT += network
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT -= gui
 
-CONFIG += c++11 debug
+CONFIG += c++11 console
+CONFIG -= app_bundle
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -16,28 +17,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    Ecosystem.cpp \
-    board.cpp \
-    graph.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    panel.cpp \
-    playground.cpp \
-    super_chart.cpp
-
-HEADERS += \
-    Ecosystem.h \
-    board.h \
-    graph.h \
-    mainwindow.h \
-    panel.h \
-    playground.h \
-    super_chart.h
-
-FORMS += \
-    mainwindow.ui
+        logic_component.cpp \
+        main.cpp \
+        server.cpp \
+        socket_thread.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+HEADERS += \
+    logic_component.h \
+    server.h \
+    socket_thread.h
