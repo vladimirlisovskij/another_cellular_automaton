@@ -3,6 +3,7 @@
 
 #include <base_component.h>
 #include <QPushButton>
+#include <QTimer>
 
 class start_component : public BaseComponent
 {
@@ -10,9 +11,19 @@ class start_component : public BaseComponent
     * Реализует кнопку старта
 */
 public:
-    start_component(QString name, QWidget* parent = nullptr);
+    start_component(QString name1, QString name2, QWidget* parent = nullptr);
+
+private:
+    QString _name1;
+    QString _name2;
+    bool _is_run;
+    QPushButton* _but;
+    QTimer* _timer;
 
 public slots:
+    void start_stop();
+
+private slots:
     void ping ();
 };
 
@@ -24,7 +35,7 @@ class restart_component : public BaseComponent
 public:
     restart_component(QString name, QWidget* parent = nullptr);
 
-public slots:
+private slots:
     void ping ();
 };
 

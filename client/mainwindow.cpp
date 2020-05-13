@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     table_ = new table_component(free_colors_, board_labs, this);
     screen_ = new screen_component(width, height, this);
     graph_ = new graph_component(graph_leafs, this);
-    start_ = new start_component("Next", this);
+    start_ = new start_component("Stop", "Next", this);
     restart_ = new restart_component("Clear", this);
     client_ = new client_component(QHostAddress("127.0.0.1"), 4242, this);
 

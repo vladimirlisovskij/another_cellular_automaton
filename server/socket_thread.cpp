@@ -1,5 +1,7 @@
 #include "socket_thread.h"
 
+#include <QThread>
+
 socket_thread::socket_thread(qint32 socket_id, QObject *parent)
     : QThread(parent)
     , _socket_id(socket_id)
