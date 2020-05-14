@@ -8,6 +8,7 @@
 #include<QJsonArray>
 #include<QJsonObject>
 #include<logic_component.h>
+#include<QTimer>
 
 class socket_thread : public QThread
 {
@@ -32,6 +33,7 @@ private:
     QTcpSocket* _soc;
     logic_component* _logic;
     QString _type;
+    QTimer* _timer;
 
 };
 

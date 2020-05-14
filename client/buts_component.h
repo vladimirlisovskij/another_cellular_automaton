@@ -3,7 +3,6 @@
 
 #include <base_component.h>
 #include <QPushButton>
-#include <QTimer>
 
 class start_component : public BaseComponent
 {
@@ -18,13 +17,12 @@ private:
     QString _name2;
     bool _is_run;
     QPushButton* _but;
-    QTimer* _timer;
 
 public slots:
-    void start_stop();
+    void stop();
 
 private slots:
-    void ping ();
+    void start_stop();
 };
 
 class restart_component : public BaseComponent

@@ -59,10 +59,14 @@ void socket_thread::read_data()
         qDebug() << "GRASS";
         if (!obj.contains("grass size")) return;
         _logic->add_grass(obj["grass size"].toInt());
-    } else if (_type == "next")
+    } else if (_type == "start")
     {
         qDebug() << "NEXT";
-        _logic->tik();
+        _timer->start(1000);
+    } else if (_type == "stop")
+    {
+        qDebug() << "STOP";
+        _timer->stop();
     } else if (_type == "restart")
     {
         qDebug() << "CLEAR";
@@ -79,13 +83,18 @@ void socket_thread::run()
 {
     _soc = new QTcpSocket();
     _logic = new logic_component(30, 30);
+    _timer = new QTimer(this);
     if (_soc->setSocketDescriptor(_socket_id))
     {
         connect(_soc, &QTcpSocket::readyRead, this, &socket_thread::read_data, Qt::DirectConnection);
         connect(_logic, &logic_component::notify, this, &socket_thread::write, Qt::DirectConnection);
         connect(_soc, &QTcpSocket::disconnected, this, &socket_thread::quit);
+        connect(_timer, &QTimer::timeout, _logic, &logic_component::tik);
+
+        connect(_soc, &QTcpSocket::disconnected, _timer, &QTimer::deleteLater);
         connect(_soc, &QTcpSocket::disconnected, _soc, &QTcpSocket::deleteLater);
         connect(_soc, &QTcpSocket::disconnected, _logic, &logic_component::deleteLater);
+
         qDebug() << "Connection started";
         _logic->tik();
         exec();
