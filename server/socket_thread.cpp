@@ -13,7 +13,7 @@ void socket_thread::write(QJsonObject data)
     qDebug() << "\nWRITE";
     data["type"] = _type;
     QJsonDocument doc(data);
-    QString res = QString::fromLatin1(doc.toJson(QJsonDocument::Compact));
+    QString res = doc.toJson(QJsonDocument::Compact);
     qDebug() << res.mid(0, 100);
     qint32 start = 0;
     QString temp;
@@ -83,7 +83,7 @@ void socket_thread::run()
 {
     _soc = new QTcpSocket();
     _logic = new logic_component(30, 30);
-    _timer = new QTimer(this);
+    _timer = new QTimer();
     if (_soc->setSocketDescriptor(_socket_id))
     {
         connect(_soc, &QTcpSocket::readyRead, this, &socket_thread::read_data, Qt::DirectConnection);
@@ -94,6 +94,7 @@ void socket_thread::run()
         connect(_soc, &QTcpSocket::disconnected, _timer, &QTimer::deleteLater);
         connect(_soc, &QTcpSocket::disconnected, _soc, &QTcpSocket::deleteLater);
         connect(_soc, &QTcpSocket::disconnected, _logic, &logic_component::deleteLater);
+        connect(_soc, &QTcpSocket::disconnected, _timer, &QTimer::deleteLater);
 
         qDebug() << "Connection started";
         _logic->tik();

@@ -29,15 +29,16 @@ graph_component_leaf::graph_component_leaf(QString name, QVector<QColor> lines_c
     this->setFixedSize(15*30, 30*10);
 }
 
-void graph_component_leaf::set_data(QVector<QPair<QColor,qint32>> data)
+void graph_component_leaf::set_data(QHash<QString,qint32> data)
 {
     if (data.size())
     {
         clear_lines();
-        for (auto i: data)
+        for (auto i = data.begin(); i != data.end(); ++i)
         {
-            values_[lines_colors_.indexOf(i.first)].push_back(i.second);
-            if (values_[lines_colors_.indexOf(i.first)].size() > 10) values_[lines_colors_.indexOf(i.first)].pop_front();
+            qint32 line_index = lines_colors_.indexOf(QColor(i.key()));
+            values_[line_index].push_back(i.value());
+            if (values_[line_index].size() > 10) values_[line_index].pop_front();
         }
         QVector<qint32> temp;
         for (auto i : values_) temp.push_back(*std::max_element(i.begin(), i.end()));
@@ -93,15 +94,13 @@ void graph_component::show(qint32 num)
     visible_ = num;
 }
 
-void graph_component::set_data(QVector<QPair<QColor,QVector<qint32>>> data)
+void graph_component::set_data(QHash<QString,QVector<qint32>> data)
 {
-    QVector<QVector<QPair<QColor,qint32>>> res;
-    for (qint32 i = 0; i < comps_.size(); ++i) res.push_back(QVector<QPair<QColor,qint32>> {});
-    for (auto i : data)
+    QVector<QHash<QString,qint32>> res;
+    for (qint32 i = 0; i < comps_.size(); ++i) res.push_back(QHash<QString,qint32> {});
+    for (auto i = data.begin(); i != data.end(); ++i)
         for (qint32 j = 0; j < comps_.size(); ++j)
-            res[j].push_back(QPair<QColor,qint32>
-            {i.first,
-             i.second[j]});
+            res[j].insert(i.key(), i.value()[j]);
     for (qint32 i = 0; i < comps_.size(); ++i) comps_[i]->set_data(res[i]);
 }
 

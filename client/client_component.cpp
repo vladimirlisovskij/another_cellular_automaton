@@ -28,9 +28,9 @@ client_component::client_component(QHostAddress ip, qint32 port, QWidget *parent
 void client_component::write(QJsonObject data)
 {
     if (!_soc->isOpen()) return;
-    QString res = QString::fromUtf8(QJsonDocument(data).toJson());
+    QString res = QJsonDocument(data).toJson();
     qDebug() << "\nWRITE";
-    qDebug() << data;
+    qDebug() << res;
     _soc->write(res.toUtf8());
     _soc->flush();
 }
@@ -62,12 +62,12 @@ void client_component::disconnected()
 void client_component::ready_read()
 {
     QByteArray data = _soc->readAll();
-    QString temp = QString(data).toUtf8();
+    QString temp = QString(data);
     _json += temp;
     if (_json.back() == '*')
     {
         _json.chop(1);
-        QJsonDocument doc = QJsonDocument::fromJson(QString(_json).toUtf8());
+        QJsonDocument doc = QJsonDocument::fromJson(_json.toUtf8());
         QJsonObject obj = doc.object();
         qDebug() << "\nREAD";
         qDebug() << obj;

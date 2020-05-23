@@ -44,10 +44,7 @@ QJsonObject logic_component::make_data()
     for (auto cell = all_grass.begin(); cell != all_grass.end(); ++ cell)
     {
         QJsonObject grass_cell;
-        QJsonObject pos;
-        pos["x"] = cell.key().first;
-        pos["y"] = cell.key().second;
-        grass_cell["key"] = pos;
+        grass_cell["key"] = cell.key().first*30 + cell.key().second;
         grass_cell["value"] = cell.value();
         grass.push_back(grass_cell);
     }
@@ -60,10 +57,7 @@ QJsonObject logic_component::make_data()
         for (auto cell = spec.begin(); cell != spec.end(); ++cell)
         {
             QJsonObject spec_cell;
-            QJsonObject pos;
-            pos["x"] = cell.key().first;
-            pos["y"] = cell.key().second;
-            spec_cell["key"] = pos;
+            spec_cell["key"] = cell.key().first*30 + cell.key().second;
             spec_cell["value"] = cell.value().size();
             spec_res.push_back(spec_cell);
         }

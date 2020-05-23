@@ -4,10 +4,9 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , free_colors_ ({Qt::red, Qt::blue, Qt::magenta, Qt::yellow})
     , grass_colors_ ({{0,255,164},{10,255,0},{160,255,0}})
+    , width_(30)
+    , height_(30)
 {
-    const qint32 width = 30;
-    const qint32 height = 30;
-
     const QVector<QString> graph_labels {"Number", "Speed", "Endurance", "Vitality", "Max vitality"};
     const QVector<QString> board_labs {"Level", "Num", "S", "E", "V", "Max v"};
     const QVector<QString> panel1_labs {"grass size"};
@@ -15,9 +14,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     QVector<panel_component_leaf*> panel1_leafs;
     QVector<panel_component_leaf*> panel2_leafs;
-    for (auto i : panel1_labs) panel1_leafs.push_back(new panel_component_leaf(i, 1, width*height));
-    for (auto i : panel2_labs) panel2_leafs.push_back(new panel_component_leaf(i, 1, width*height));
-    panel2_leafs.push_back(new panel_component_leaf("animal level", 0, width*height));
+    for (auto i : panel1_labs) panel1_leafs.push_back(new panel_component_leaf(i, 1, width_*height_));
+    for (auto i : panel2_labs) panel2_leafs.push_back(new panel_component_leaf(i, 1, width_*height_));
+    panel2_leafs.push_back(new panel_component_leaf("animal level", 0, width_*height_));
 
     QVector<graph_component_leaf*> graph_leafs;
     for (auto i : graph_labels) graph_leafs.push_back(new graph_component_leaf(i, free_colors_));
@@ -25,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     panel1_ = new panel_component(panel1_leafs,"Add grass", this);
     panel2_ = new panel_component(panel2_leafs,"Add animal", this);
     table_ = new table_component(free_colors_, board_labs, this);
-    screen_ = new screen_component(width, height, this);
+    screen_ = new screen_component(width_, height_, this);
     graph_ = new graph_component(graph_leafs, this);
     start_ = new start_component("Start", "Stop", this);
     restart_ = new restart_component("Clear", this);
@@ -109,12 +108,9 @@ void MainWindow::next(QJsonObject data)
 void MainWindow::change_stats(QJsonObject data)
 {
     QString type = data["type"].toString();
-    if (type != "grass" && type != "next")
-    {
-        graph_->clear();
-    }
+    if (type != "grass" && type != "start") graph_->clear();
     table_->clear();
-    QVector<QPair<QColor,QVector<qint32>>> graph_data;
+    QHash<QString,QVector<qint32>> graph_data;
     QJsonArray stats = data["stats"].toArray();
     QJsonArray colors = data["colors"].toArray();
     for (qint32 i = 0; i < stats.size(); ++i)
@@ -126,7 +122,7 @@ void MainWindow::change_stats(QJsonObject data)
         res.stats = animal_stats;
         table_->set_data(res);
         animal_stats.pop_front();
-        graph_data.push_back(QPair<QColor,QVector<qint32>>{free_colors_[colors[i].toInt()],animal_stats});
+        graph_data.insert(free_colors_[colors[i].toInt()].name(),animal_stats);
     }
     graph_->set_data(graph_data);
     QHash<QPair<qint32,qint32>,QPair<QColor,QString>> screen_data;
@@ -135,8 +131,8 @@ void MainWindow::change_stats(QJsonObject data)
     QJsonArray animals = koord["animals"].toArray();
     for (auto i : grass)
     {
-        QJsonObject key_json = i.toObject()["key"].toObject();
-        QPair<qint32,qint32> key = {key_json["x"].toInt(),key_json["y"].toInt()};
+        qint32 key_json = i.toObject()["key"].toInt();
+        QPair<qint32,qint32> key = {key_json/this->width_,key_json%this->height_};
         qint32 val = i.toObject()["value"].toInt();
         screen_data[key] = QPair<QColor,QString>{grass_colors_[val], " "};
     }
@@ -145,8 +141,8 @@ void MainWindow::change_stats(QJsonObject data)
         QJsonArray spec = animals[i].toArray();
         for (qint32 j = 0; j != spec.size(); ++j)
         {
-            QJsonObject key_json = spec[j].toObject()["key"].toObject();
-            QPair<qint32,qint32> key = {key_json["x"].toInt(),key_json["y"].toInt()};
+            qint32 key_json = spec[j].toObject()["key"].toInt();
+            QPair<qint32,qint32> key = {key_json/this->width_,key_json%this->height_};
             qint32 val = spec[j].toObject()["value"].toInt();
             screen_data[key] = QPair<QColor,QString>{free_colors_[colors[i].toInt()], QString::number(val)};
         }

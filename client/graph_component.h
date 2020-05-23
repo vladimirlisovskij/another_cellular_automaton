@@ -31,7 +31,7 @@ public:
     graph_component_leaf (QString name, QVector<QColor> lines_colors, QWidget *parent = nullptr);
 
 public slots:
-    void set_data (QVector<QPair<QColor,qint32>> data);
+    void set_data (QHash<QString,qint32> data);
     void clear ();
     void remove (QColor mark);
 };
@@ -51,7 +51,7 @@ public:
 
 public slots:
     void show (qint32 num);
-    void set_data (QVector<QPair<QColor,QVector<qint32>>> data);
+    void set_data (QHash<QString,QVector<qint32>> data);
     void clear ();
     void remove (QColor mark);
 };

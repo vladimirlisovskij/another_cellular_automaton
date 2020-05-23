@@ -27,6 +27,8 @@ private:
     restart_component* restart_;
     const QVector<QColor> free_colors_;
     const QVector<QColor> grass_colors_;
+    const qint32 width_;
+    const qint32 height_;
 
 private slots:
     void change_focus (QJsonObject data);
