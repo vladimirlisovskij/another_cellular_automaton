@@ -16,7 +16,7 @@ class panel_component_leaf : public QWidget
     Q_OBJECT
 private:
     QSpinBox* val_;
-    QString name;
+    QString name_;
 
 public:
     panel_component_leaf (QString name, qint32 min_val, qint32 max_val, QWidget* parent = nullptr);

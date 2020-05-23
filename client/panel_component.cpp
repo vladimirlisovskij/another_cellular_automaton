@@ -3,7 +3,7 @@
 panel_component_leaf::panel_component_leaf(QString name, qint32 min_val, qint32 max_val, QWidget *parent)
     : QWidget (parent)
     , val_(new QSpinBox)
-    , name(name)
+    , name_(name)
 {
     QHBoxLayout* main_lay = new QHBoxLayout;
     QLabel* lab = new QLabel(name);
@@ -19,7 +19,7 @@ panel_component_leaf::panel_component_leaf(QString name, qint32 min_val, qint32 
 
 QPair<QString, qint32> panel_component_leaf::get_data()
 {
-    return {name, val_->value()};
+    return {name_, val_->value()};
 }
 
 panel_component::panel_component(QVector<panel_component_leaf*> comps, QString but_name, QWidget *parent)
