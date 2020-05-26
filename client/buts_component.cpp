@@ -1,6 +1,6 @@
 #include "buts_component.h"
 
-start_component::start_component(QString name1, QString name2, QWidget *parent)
+start_component::start_component(const QString& name1, const QString& name2, QWidget *parent)
     : BaseComponent(parent)
     , _name1(name1)
     , _name2(name2)
@@ -28,7 +28,7 @@ void start_component::start_stop()
     emit notify(res);
 }
 
-restart_component::restart_component(QString name, QWidget *parent)
+restart_component::restart_component(const QString& name, QWidget *parent)
     : BaseComponent(parent)
 {
     QPushButton* but = new QPushButton(name, this);

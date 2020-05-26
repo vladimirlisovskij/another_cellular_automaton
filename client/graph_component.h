@@ -28,10 +28,10 @@ private:
     void clear_lines ();
 
 public:
-    graph_component_leaf (QString name, QVector<QColor> lines_colors, QWidget *parent = nullptr);
+    graph_component_leaf (const QString& name, const QVector<QColor>& lines_colors, QWidget *parent = nullptr);
 
 public slots:
-    void set_data (QHash<QString,qint32> data);
+    void set_data (const QHash<QString,qint32>& data);
     void clear ();
     void remove (QColor mark);
 };
@@ -47,11 +47,11 @@ private:
     QVector<graph_component_leaf*> comps_;
 
 public:
-    graph_component(QVector<graph_component_leaf*> comps, QWidget* parent = nullptr);
+    graph_component(const QVector<graph_component_leaf*>& comps, QWidget* parent = nullptr);
 
 public slots:
     void show (qint32 num);
-    void set_data (QHash<QString,QVector<qint32>> data);
+    void set_data (const QHash<QString,QVector<qint32>>& data);
     void clear ();
     void remove (QColor mark);
 };

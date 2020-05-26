@@ -10,7 +10,7 @@ class start_component : public BaseComponent
     * Реализует кнопку старта
 */
 public:
-    start_component(QString name1, QString name2, QWidget* parent = nullptr);
+    start_component(const QString& name1, const QString& name2, QWidget* parent = nullptr);
 
 private:
     QString _name1;
@@ -31,7 +31,7 @@ class restart_component : public BaseComponent
     * Реализует кнопку сброса
 */
 public:
-    restart_component(QString name, QWidget* parent = nullptr);
+    restart_component(const QString& name, QWidget* parent = nullptr);
 
 private slots:
     void ping ();

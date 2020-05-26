@@ -14,8 +14,8 @@ class client_component : public BaseComponent
     * Реализует копмонент отвечающий за связь с сервером
 */
 public:
-    client_component(QHostAddress ip, qint32 port, QWidget* parent = nullptr);
-    void write(QJsonObject data);
+    client_component(const QHostAddress& ip, qint32 port, QWidget* parent = nullptr);
+    void write(const QJsonObject& data);
 
 private slots:
     void start();

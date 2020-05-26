@@ -1,4 +1,5 @@
 #include "logic_component.h"
+#include <QDebug>
 
 logic_component::logic_component(qint32 width, qint32 height, QObject *parent)
     : QObject(parent)
@@ -8,6 +9,11 @@ logic_component::logic_component(qint32 width, qint32 height, QObject *parent)
     , _max_specs(4)
 {
     qsrand(QDateTime::currentDateTime().toTime_t());
+    _free_colors.reserve(_max_specs);
+    _colors.reserve(_max_specs);
+    all_free_space.reserve(square);
+    all_grass.reserve(square);
+    all_animals.reserve(_max_specs);
     clear();
 }
 
@@ -16,12 +22,10 @@ void logic_component::add_animal(const logic_component::Animal& animal, qint32 n
     if (all_free_space.size() >= num && !_free_colors.empty())
     {
         _colors.push_back(_free_colors.takeLast());
-        QHash<QPair<qint32,qint32>,QVector<Animal>> temp;
-        for (qint32 i = 0; i < num; ++i)
-        {
-            temp[get_free_pos()] = QVector<Animal>{animal};
-        }
-        all_animals.push_back(temp);
+        QHash<QPair<qint32,qint32>,QLinkedList<Animal>> spec;
+        spec.reserve(square);
+        for (qint32 i = 0; i < num; ++i) spec[get_free_pos()] = QLinkedList<Animal>{animal};
+        all_animals.append(spec);
         all_animals_levels.push_back(level);
     }
     update();
@@ -194,7 +198,7 @@ void logic_component::eat()
             qint32 max_lvl = -1;
             qint32 low_lvl_animals = 0;
             qint32 hight_lvl_animals = 0;
-            QVector<qint32> max_lvl_animals;
+            QLinkedList<qint32> max_lvl_animals;
             bool is_0_lvl = false;
             for (qint32 i = 0; i < all_animals.size(); ++i)
             {
@@ -225,7 +229,7 @@ void logic_component::eat()
             {
                 qint32 point = 15 * (max_lvl ? low_lvl_animals : all_grass[pos]+1) / hight_lvl_animals;
                 for (auto i: max_lvl_animals) for (auto& zoo: all_animals[i][pos]) zoo.vitality = qMin(zoo.max_vitality, zoo.vitality + point);
-                if (is_0_lvl) all_grass.remove(pos);
+                all_grass.remove(pos);
             }
         }
     }
@@ -260,27 +264,29 @@ void logic_component::reproduction()
         }
     }
     for (auto pos: temp) all_grass[pos] = LITTLE;
+
     for (qint32 ind = 0; ind < all_animals.size(); ++ind)
     {
         auto spec = all_animals[ind];
         for (auto cell = spec.begin(); cell != spec.end(); ++cell)
         {
             qint32 size = cell.value().size()/2;
+            auto a = all_animals[ind][cell.key()].begin();
             for (qint32 i = 0; i < size; ++i)
             {
-                all_animals[ind][cell.key()][i].vitality /= 2;
-                all_animals[ind][cell.key()][i+size].vitality /= 2;
-                Animal temp = new_animal(all_animals[ind][cell.key()][i], all_animals[ind][cell.key()][i+size]);
-                all_animals[ind][cell.key()].push_back(temp);
+                a->vitality /= 2;
+                (a+1)->vitality /= 2;
+                all_animals[ind][cell.key()].append(new_animal(*a, *(a+1)));
+                a += 2;
             }
         }
     }
 }
 
-void logic_component::animal_move(QHash<QPair<qint32,qint32>,QVector<Animal>>& animal)
+void logic_component::animal_move(QHash<QPair<qint32, qint32>, QLinkedList<Animal> > &data)
 {
-    QHash<QPair<qint32,qint32>,QVector<Animal>> temp;   /* данные для следущего шага */
-    for (auto iter = animal.begin(); iter != animal.end(); ++iter)   /* итерируемся по словарю животных */
+    QHash<QPair<qint32,qint32>,QLinkedList<Animal>> temp;   /* данные для следущего шага */
+    for (auto iter = data.begin(); iter != data.end(); ++iter)   /* итерируемся по словарю животных */
     {
         all_free_space.insert(iter.key());
         for (Animal zoo: iter.value())   /* итерируемся по животным в этой ячейке */
@@ -300,11 +306,11 @@ void logic_component::animal_move(QHash<QPair<qint32,qint32>,QVector<Animal>>& a
                 new_pos.second = qMax(0, new_pos.second);
                 new_pos.second = qMin(width - 1, new_pos.second);
                 zoo.vitality -= zoo.endurance;   /* отнимаем энергию на перемещение */
-                if (!temp.contains(new_pos)) temp[new_pos] = QVector<Animal> {};   /* создадим массив, если до этого в словаре его не было */
+                if (!temp.contains(new_pos)) temp[new_pos] = QLinkedList<Animal> {};   /* создадим массив, если до этого в словаре его не было */
                 temp[new_pos].push_back(zoo);   /* переместим результат в словарь данных для следующего шага */
                 all_free_space.remove(new_pos);
             }
         }
     }
-    animal = temp;
+    data = temp;
 }

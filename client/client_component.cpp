@@ -1,6 +1,6 @@
 #include "client_component.h"
 
-client_component::client_component(QHostAddress ip, qint32 port, QWidget *parent)
+client_component::client_component(const QHostAddress& ip, qint32 port, QWidget *parent)
     : BaseComponent(parent)
     , _soc(new QTcpSocket(this))
     , _lab(new QLabel("Disconnected", this))
@@ -25,7 +25,7 @@ client_component::client_component(QHostAddress ip, qint32 port, QWidget *parent
     connect(_but, &QPushButton::clicked, this, &client_component::start);
 }
 
-void client_component::write(QJsonObject data)
+void client_component::write(const QJsonObject &data)
 {
     if (!_soc->isOpen()) return;
     QString res = QJsonDocument(data).toJson();

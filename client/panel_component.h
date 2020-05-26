@@ -19,7 +19,7 @@ private:
     QString name_;
 
 public:
-    panel_component_leaf (QString name, qint32 min_val, qint32 max_val, QWidget* parent = nullptr);
+    panel_component_leaf (const QString& name, qint32 min_val, qint32 max_val, QWidget* parent = nullptr);
 
 public slots:
     QPair<QString,qint32> get_data ();
@@ -35,7 +35,7 @@ private:
     QVector<panel_component_leaf*> comps_;
 
 public:
-    panel_component(QVector<panel_component_leaf*> comps, QString but_name, QWidget* parent = nullptr);
+    panel_component(const QVector<panel_component_leaf*>& comps, const QString& but_name, QWidget* parent = nullptr);
 
 public slots:
     void get_data ();

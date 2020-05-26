@@ -12,16 +12,11 @@ class table_component : public BaseComponent
     * Реализует таблицу со статистикой
 */
 public:
-    enum ans {SWITCH, REMOVE};
-    struct row {
-        QColor color;
-        QVector<qint32> stats;
-    };
-    table_component(QVector<QColor> colors, QVector<QString> labels, QWidget* parent = nullptr);
+    table_component(const QVector<QColor>& colors, const QVector<QString>& labels, QWidget* parent = nullptr);
 
 public slots:
     void clear ();
-    void set_data (row data);
+    void set_data (const QColor& color, const QVector<qint32>& stats);
 
 private slots:
     void clicked_row (QTableWidgetItem*);

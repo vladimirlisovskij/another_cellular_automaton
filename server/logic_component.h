@@ -8,6 +8,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QStack>
+#include <QLinkedList>
 
 class logic_component : public QObject
 {
@@ -46,7 +47,7 @@ private:
     QVector<qint32> _colors;
     QVector<qint32> all_animals_levels;
     QHash<QPair<qint32,qint32>,Grass_size> all_grass;
-    QVector<QHash<QPair<qint32,qint32>,QVector<Animal>>> all_animals;
+    QVector<QHash<QPair<qint32,qint32>,QLinkedList<Animal>>> all_animals;
     QSet<QPair<qint32,qint32>> all_free_space;
     QPair<qint32,qint32> get_free_pos ();
     Animal new_animal (Animal f, Animal m);
@@ -57,7 +58,7 @@ private:
     void move ();
     void eat ();
     void reproduction ();
-    void animal_move (QHash<QPair<qint32,qint32>,QVector<Animal>>&);
+    void animal_move (QHash<QPair<qint32,qint32>,QLinkedList<Animal>>& data);
 };
 
 #endif // LOGIC_COMPONENT_H

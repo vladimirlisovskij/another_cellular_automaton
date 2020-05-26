@@ -1,6 +1,6 @@
 #include "panel_component.h"
 
-panel_component_leaf::panel_component_leaf(QString name, qint32 min_val, qint32 max_val, QWidget *parent)
+panel_component_leaf::panel_component_leaf(const QString& name, qint32 min_val, qint32 max_val, QWidget *parent)
     : QWidget (parent)
     , val_(new QSpinBox)
     , name_(name)
@@ -22,7 +22,7 @@ QPair<QString, qint32> panel_component_leaf::get_data()
     return {name_, val_->value()};
 }
 
-panel_component::panel_component(QVector<panel_component_leaf*> comps, QString but_name, QWidget *parent)
+panel_component::panel_component(const QVector<panel_component_leaf *> &comps, const QString &but_name, QWidget *parent)
     : BaseComponent(parent)
     , comps_ (comps)
 {

@@ -24,7 +24,7 @@ signals:
     void is_finished(qint32 id);
 
 private slots:
-    void write(QJsonObject data);
+    void write(const QJsonObject& data);
     void read_data();
 
 private:
@@ -32,7 +32,6 @@ private:
     const int _socket_id;
     QTcpSocket* _soc;
     logic_component* _logic;
-    QString _type;
     QTimer* _timer;
 
 };

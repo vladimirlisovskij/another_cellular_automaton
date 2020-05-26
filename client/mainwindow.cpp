@@ -75,21 +75,25 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::change_focus(QJsonObject data)
 {
-    qint32 num = data["num"].toInt();
     if (data["type"] == "select")
     {
+        qint32 num = data["num"].toInt();
         graph_->show(num);
-    } else client_->write(data);
+    } else {
+        client_->write(data);
+        graph_->clear();
+    }
 }
 
 void MainWindow::clear(QJsonObject data)
 {
     client_->write(data);
+    graph_->clear();
 }
 
 void MainWindow::add_animal(QJsonObject data)
 {
-
+    graph_->clear();
     data["type"] = "animal";
     client_->write(data);
 }
@@ -97,9 +101,9 @@ void MainWindow::add_animal(QJsonObject data)
 void MainWindow::add_grass(QJsonObject data)
 {
     data["type"] = "grass";
+    graph_->clear();
     client_->write(data);
 }
-
 void MainWindow::next(QJsonObject data)
 {
     client_->write(data);
@@ -107,20 +111,16 @@ void MainWindow::next(QJsonObject data)
 
 void MainWindow::change_stats(QJsonObject data)
 {
-    QString type = data["type"].toString();
-    if (type != "grass" && type != "start") graph_->clear();
     table_->clear();
     QHash<QString,QVector<qint32>> graph_data;
     QJsonArray stats = data["stats"].toArray();
     QJsonArray colors = data["colors"].toArray();
     for (qint32 i = 0; i < stats.size(); ++i)
     {
-        table_component::row res;
-        res.color = free_colors_[colors[i].toInt()];
+        QColor color = free_colors_[colors[i].toInt()];
         QVector<qint32> animal_stats;
         for (auto j : stats[i].toArray()) animal_stats.push_back(j.toInt());
-        res.stats = animal_stats;
-        table_->set_data(res);
+        table_->set_data(color, animal_stats);
         animal_stats.pop_front();
         graph_data.insert(free_colors_[colors[i].toInt()].name(),animal_stats);
     }

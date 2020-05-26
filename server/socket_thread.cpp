@@ -8,10 +8,9 @@ socket_thread::socket_thread(qint32 socket_id, QObject *parent)
 {
 }
 
-void socket_thread::write(QJsonObject data)
+void socket_thread::write(const QJsonObject& data)
 {
     qDebug() << "\nWRITE";
-    data["type"] = _type;
     QJsonDocument doc(data);
     QString res = doc.toJson(QJsonDocument::Compact);
     qDebug() << res.mid(0, 100);
@@ -36,8 +35,8 @@ void socket_thread::read_data()
     QJsonObject obj =  doc.object();
     qDebug() << obj;
     if (!obj.contains("type")) return;
-    _type = obj["type"].toString();
-    if (_type == "animal")  // switch не работает со строками 8(
+    QString type = obj["type"].toString();
+    if (type == "animal")  // switch не работает со строками 8(
     {
         qDebug() << "ANIMAL";
         if (!(
@@ -54,24 +53,24 @@ void socket_thread::read_data()
         animal.vitality = obj["animal vitality"].toInt();
         animal.max_vitality = obj["animal max vitality"].toInt();
         _logic->add_animal(animal, obj["animal number"].toInt(), obj["animal level"].toInt());
-    } else if (_type == "grass")
+    } else if (type == "grass")
     {
         qDebug() << "GRASS";
         if (!obj.contains("grass size")) return;
         _logic->add_grass(obj["grass size"].toInt());
-    } else if (_type == "start")
+    } else if (type == "start")
     {
         qDebug() << "NEXT";
         _timer->start(1000);
-    } else if (_type == "stop")
+    } else if (type == "stop")
     {
         qDebug() << "STOP";
         _timer->stop();
-    } else if (_type == "restart")
+    } else if (type == "restart")
     {
         qDebug() << "CLEAR";
         _logic->clear();
-    } else if (_type == "delete")
+    } else if (type == "delete")
     {
         qDebug() << "DELETE";
         if (!obj.contains("num")) return;

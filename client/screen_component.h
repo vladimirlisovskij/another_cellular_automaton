@@ -22,7 +22,7 @@ public:
     screen_component (qint32 width, qint32 height, QWidget* parent = nullptr);
 
 public slots:
-    void set_data (QHash<QPair<qint32,qint32>,QPair<QColor,QString>>);
+    void set_data (const QHash<QPair<qint32,qint32>,QPair<QColor,QString>>& data);
 };
 
 #endif // SCREEN_COMPONENT_H

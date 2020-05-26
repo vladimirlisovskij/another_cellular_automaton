@@ -1,6 +1,6 @@
 #include "table_component.h"
 
-table_component::table_component(QVector<QColor> colors, QVector<QString> labels, QWidget *parent)
+table_component::table_component(const QVector<QColor> &colors, const QVector<QString> &labels, QWidget *parent)
     : BaseComponent (parent)
     , size_ (labels.size())
     , colors_ (colors)
@@ -24,17 +24,17 @@ void table_component::clear()
     for (qint32 i = table_->rowCount() - 1; i >= 0; --i) table_->removeRow(i);
 }
 
-void table_component::set_data(table_component::row data)
+void table_component::set_data(const QColor &color, const QVector<qint32> &stats)
 {
     const qint32 num = table_->rowCount();
     table_->insertRow(num);
     for (qint32 i = 0; i < size_; ++i)
     {
         table_->setItem(num, i, new QTableWidgetItem());
-        table_->item(num, i)->setText(QString::number(data.stats[i]));
+        table_->item(num, i)->setText(QString::number(stats[i]));
     }
     QTableWidgetItem *col = new QTableWidgetItem(QString::number(num));
-    col->setBackground(data.color);
+    col->setBackground(color);
     table_->setVerticalHeaderItem(num, col);
 }
 

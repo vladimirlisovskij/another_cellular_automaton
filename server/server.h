@@ -14,7 +14,6 @@ class server : public QObject
     Q_OBJECT
 public:
     explicit server(QObject* parent = nullptr);
-    ~server();
 
 public slots:
     void on_new_connection();

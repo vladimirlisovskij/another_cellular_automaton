@@ -32,7 +32,7 @@ screen_component::screen_component(qint32 width, qint32 height, QWidget *parent)
     this->setFixedSize(15*width, 15*height);
 }
 
-void screen_component::set_data(QHash<QPair<qint32,qint32>,QPair<QColor,QString>> data)
+void screen_component::set_data(const QHash<QPair<qint32,qint32>,QPair<QColor,QString>>& data)
 {
     for (qint32 x = 0; x < height; x++)
     {

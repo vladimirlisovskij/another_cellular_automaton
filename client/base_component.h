@@ -10,7 +10,7 @@ class BaseComponent : public QWidget{
 /*
     * Базовый класс компонентов имеющих графическую оболочку
 */
-    Q_OBJECT
+    Q_OBJECT;
 public:
     explicit BaseComponent (QWidget* parent = nullptr) : QWidget(parent) {};
 

@@ -1,16 +1,10 @@
 #include "server.h"
-#include <iostream>
 
 server::server(QObject *parent)
     : QObject(parent)
-    , _server(new QTcpServer)
+    , _server(new QTcpServer(this))
 {
     connect(_server, &QTcpServer::newConnection, this, &server::on_new_connection);
-}
-
-server::~server()
-{
-    delete _server;
 }
 
 void server::on_new_connection()

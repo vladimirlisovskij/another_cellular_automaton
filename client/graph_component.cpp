@@ -5,7 +5,7 @@ void graph_component_leaf::clear_lines()
     for (auto& i : lines_) i->clear();
 }
 
-graph_component_leaf::graph_component_leaf(QString name, QVector<QColor> lines_colors, QWidget *parent)
+graph_component_leaf::graph_component_leaf(const QString &name, const QVector<QColor> &lines_colors, QWidget *parent)
     : QChartView (parent)
     , lines_colors_ (lines_colors)
     , axisY_ (new QValueAxis)
@@ -29,7 +29,7 @@ graph_component_leaf::graph_component_leaf(QString name, QVector<QColor> lines_c
     this->setFixedSize(15*30, 30*10);
 }
 
-void graph_component_leaf::set_data(QHash<QString,qint32> data)
+void graph_component_leaf::set_data(const QHash<QString, qint32>& data)
 {
     if (data.size())
     {
@@ -70,7 +70,7 @@ void graph_component_leaf::remove(QColor mark)
     values_[lines_colors_.indexOf(mark)].clear();
 }
 
-graph_component::graph_component(QVector<graph_component_leaf*> comps, QWidget *parent)
+graph_component::graph_component(const QVector<graph_component_leaf *> &comps, QWidget *parent)
     : BaseComponent (parent)
     , comps_ (comps)
 {
@@ -94,7 +94,7 @@ void graph_component::show(qint32 num)
     visible_ = num;
 }
 
-void graph_component::set_data(QHash<QString,QVector<qint32>> data)
+void graph_component::set_data(const QHash<QString,QVector<qint32>>& data)
 {
     QVector<QHash<QString,qint32>> res;
     for (qint32 i = 0; i < comps_.size(); ++i) res.push_back(QHash<QString,qint32> {});
