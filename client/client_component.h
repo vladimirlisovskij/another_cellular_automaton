@@ -4,7 +4,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QTcpSocket>
-#include <base_component.h>
+#include "base_component.h"
 #include <QHBoxLayout>
 #include <qhostaddress.h>
 
@@ -13,6 +13,8 @@ class client_component : public BaseComponent
 /*
     * Реализует копмонент отвечающий за связь с сервером
 */
+    friend class torment;
+
 public:
     client_component(const QHostAddress& ip, qint32 port, QWidget* parent = nullptr);
     void write(const QJsonObject& data);

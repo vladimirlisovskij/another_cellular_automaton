@@ -11,6 +11,7 @@ class BaseComponent : public QWidget{
     * Базовый класс компонентов имеющих графическую оболочку
 */
     Q_OBJECT;
+    friend class tormentor;
 public:
     explicit BaseComponent (QWidget* parent = nullptr) : QWidget(parent) {};
 

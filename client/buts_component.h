@@ -1,7 +1,7 @@
 #ifndef BUTS_COMPONENT_H
 #define BUTS_COMPONENT_H
 
-#include <base_component.h>
+#include "base_component.h"
 #include <QPushButton>
 
 class start_component : public BaseComponent
@@ -9,6 +9,8 @@ class start_component : public BaseComponent
 /*
     * Реализует кнопку старта
 */
+    friend class torment;
+
 public:
     start_component(const QString& name1, const QString& name2, QWidget* parent = nullptr);
 
