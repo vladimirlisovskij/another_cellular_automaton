@@ -55,7 +55,7 @@ void client_component::disconnected()
     _soc->close();
     _but->show();
     _lab->setText("Disconnected");
-    _lab->setFixedSize(256,25);
+    _lab->setFixedSize(128,25);
     this->setStyleSheet("background-color: red;");
 }
 

@@ -1,4 +1,4 @@
-# another_cellular_automaton
+# open_evolution
 
 ![](prev_pic.png)  
 
